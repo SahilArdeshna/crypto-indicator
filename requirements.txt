@@ -1,9 +1,9 @@
 certifi==2025.7.14
 charset-normalizer==3.4.2
 idna==3.10
-numpy==1.23.5
-pandas==1.5.3
-pandas-ta==0.3.14b0
+numpy==1.21.6
+pandas==1.4.4
+pandas-ta==0.3.14b
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 pytz==2025.2
