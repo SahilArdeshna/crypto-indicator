@@ -2,7 +2,7 @@ name: Run Python Script
 
 on:
   schedule:
-    - cron: "0 */4 * * *" # Every 4 hours UTC
+    - cron: "*/5 * * * *" # Update to every 5 minutes
   workflow_dispatch: # Allow manual run
 
 jobs:
