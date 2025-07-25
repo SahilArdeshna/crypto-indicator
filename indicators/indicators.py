@@ -84,23 +84,18 @@ def get_indicators(symbol, interval=None, limit=100):
         df['STOCHk_14_3_3'] = 100 * ((df['close'] - low_14) / (high_14 - low_14))
         df['STOCHd_14_3_3'] = df['STOCHk_14_3_3'].rolling(window=3).mean()
         
-        # Simple ATR
+        # Simple ATR (Average True Range)
         tr1 = df['high'] - df['low']
         tr2 = abs(df['high'] - df['close'].shift(1))
         tr3 = abs(df['low'] - df['close'].shift(1))
-        tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
-        df['ATRr_14'] = tr.rolling(window=14).mean()
+        tr = pd.DataFrame({'tr1': tr1, 'tr2': tr2, 'tr3': tr3}).max(axis=1)
+        df['ATRr_14'] = tr.rolling(window=14, min_periods=1).mean()
         
-        # Simple OBV
-        obv = [0]
-        for i in range(1, len(df)):
-            if df['close'].iloc[i] > df['close'].iloc[i-1]:
-                obv.append(obv[-1] + df['volume'].iloc[i])
-            elif df['close'].iloc[i] < df['close'].iloc[i-1]:
-                obv.append(obv[-1] - df['volume'].iloc[i])
-            else:
-                obv.append(obv[-1])
-        df['OBV'] = obv
+        # Simple OBV (On Balance Volume)
+        df['price_change'] = df['close'].diff()
+        df['obv_change'] = df['volume'].where(df['price_change'] > 0, 
+                                            -df['volume'].where(df['price_change'] < 0, 0))
+        df['OBV'] = df['obv_change'].cumsum()
         
         # Simple ADX approximation (trend strength)
         df['ADX_14'] = df['close'].rolling(window=14).std() / df['close'].rolling(window=14).mean() * 100
