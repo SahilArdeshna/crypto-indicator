@@ -27,7 +27,7 @@ jobs:
       - name: Run script
         env:
           CRYPTOS: ${{ secrets.CRYPTOS }}
-          INTERVAL: ${{ secrets.INTERVAL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          COIN_DESK_API_KEY: ${{ secrets.COIN_DESK_API_KEY }}
         run: python main.py

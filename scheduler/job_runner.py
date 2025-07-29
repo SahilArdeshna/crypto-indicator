@@ -1,15 +1,14 @@
 import logging
-from indicators.indicators import get_crypto_symbols_from_env, get_indicators, get_interval_from_env
+from indicators.indicators import get_crypto_symbols_from_env, get_indicators
 from telegram.alert import send_telegram_message
 
 logging.basicConfig(level=logging.INFO)
 
 def run():
-    interval = get_interval_from_env()
     symbols = get_crypto_symbols_from_env()
     for symbol in symbols:
         try:
-            indicators = get_indicators(symbol, interval)
+            indicators = get_indicators(symbol)
             if indicators is None:
                 logging.warning(f"Could not fetch {symbol} indicators. Skipping message.")
                 continue
