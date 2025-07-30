@@ -15,7 +15,7 @@ def run():
             message = f"""
             📈 *{symbol.replace('USDT','')} Update*
 
-            🧠 *Indicators:*
+            🧠 *Weekly Indicators:*
             - RSI: {indicators['RSI']}
             - MACD: {indicators['MACD']}
             - Stochastic: {indicators['Stochastic']}

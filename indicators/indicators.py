@@ -161,20 +161,28 @@ def get_indicators(symbol):
                 return "🟢" if latest['STOCHk_14_3_3'] > latest['STOCHd_14_3_3'] else "🔴"
             elif indicator == "ADX":
                 return "Strong" if value > 25 else "Weak"
+            elif indicator == "ATR":
+                # Higher ATR indicates higher volatility
+                prev_atr = weekly_df['ATRr_14'].iloc[-2] if len(weekly_df) > 1 else value
+                return "🟢" if value > prev_atr else "🔴" if value <= prev_atr else "🟡"
+            elif indicator == "OBV":
+                # Rising OBV is bullish, falling is bearish
+                prev_obv = weekly_df['OBV'].iloc[-2] if len(weekly_df) > 1 else value
+                return "🟢" if value > prev_obv else "🔴" if value <= prev_obv else "🟡"
             else:
                 return "🟡"
 
         indicators = {
-            "RSI": classify(latest['RSI_14'], "RSI"),
-            "MACD": classify(latest['MACD_12_26_9'], "MACD"),
-            "Stochastic": classify(latest['STOCHk_14_3_3'], "Stoch"),
-            "BB": "🟢" if 'BBL_20_2.0' in latest and not pd.isna(latest['BBL_20_2.0']) and latest['close'] > latest['BBL_20_2.0'] else "🟡",
-            "SMA20": "🟢" if not pd.isna(latest['SMA_20']) and latest['close'] > latest['SMA_20'] else "🔴",
-            "EMA50": "🟢" if not pd.isna(latest['EMA_50']) and latest['close'] > latest['EMA_50'] else "🔴",
-            "VWAP": "🟢" if not pd.isna(latest['VWAP']) and latest['close'] > latest['VWAP'] else "🔴",
-            "ADX": classify(latest['ADX_14'], "ADX"),
-            "ATR": f"{latest['ATRr_14']:.2f}" if not pd.isna(latest['ATRr_14']) else "N/A",
-            "OBV": f"{latest['OBV']:.2f}" if not pd.isna(latest['OBV']) else "N/A"
+            "RSI": f"{classify(latest['RSI_14'], 'RSI')} ({latest['RSI_14']:.2f})",
+            "MACD": f"{classify(latest['MACD_12_26_9'], 'MACD')} ({latest['MACD_12_26_9']:.2f})",
+            "Stochastic": f"{classify(latest['STOCHk_14_3_3'], 'Stoch')} ({latest['STOCHk_14_3_3']:.2f})",
+            "BB": f"{'🟢' if 'BBL_20_2.0' in latest and not pd.isna(latest['BBL_20_2.0']) and latest['close'] > latest['BBL_20_2.0'] else '🟡'} ({latest['close']:.2f}/{latest['BBL_20_2.0']:.2f})" if 'BBL_20_2.0' in latest and not pd.isna(latest['BBL_20_2.0']) else "🟡 (N/A)",
+            "SMA20": f"{'🟢' if not pd.isna(latest['SMA_20']) and latest['close'] > latest['SMA_20'] else '🔴'} ({latest['close']:.2f}/{latest['SMA_20']:.2f})" if not pd.isna(latest['SMA_20']) else "🟡 (N/A)",
+            "EMA50": f"{'🟢' if not pd.isna(latest['EMA_50']) and latest['close'] > latest['EMA_50'] else '🔴'} ({latest['close']:.2f}/{latest['EMA_50']:.2f})" if not pd.isna(latest['EMA_50']) else "🟡 (N/A)",
+            "VWAP": f"{'🟢' if not pd.isna(latest['VWAP']) and latest['close'] > latest['VWAP'] else '🔴'} ({latest['close']:.2f}/{latest['VWAP']:.2f})" if not pd.isna(latest['VWAP']) else "🟡 (N/A)",
+            "ADX": f"{'🟢' if latest['ADX_14'] > 25 else '🔴'} ({latest['ADX_14']:.2f})",
+            "ATR": f"{classify(latest['ATRr_14'], 'ATR')} ({latest['ATRr_14']:.2f})" if not pd.isna(latest['ATRr_14']) else "🟡 (N/A)",
+            "OBV": f"{classify(latest['OBV'], 'OBV')} (${latest['OBV']:.2f})" if not pd.isna(latest['OBV']) else "🟡 (N/A)"
         }
         return indicators
     except Exception as e:
